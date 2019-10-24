@@ -1,8 +1,9 @@
 import javax.swing.*;
-
 public class ProcesadorDeImagenes {
     String entrada;
     Imagen i;
+    int ancho;
+    int largo;
     int m[][];
     int matrizNueva[][];
     int colorFondo;
@@ -18,7 +19,50 @@ public class ProcesadorDeImagenes {
         matrizNueva = new int[m.length][m[0].length];
         colorFondo = m[0][0];
     }
-    
+    public void agrandarImagen(int fila, int columna, int colorBorde, int colorRelleno){
+        boolean espacioBlanco =false;
+        int contadorDeZoom=0;
+        int zoom[][] = new int[fila][columna];
+        //centrarFigura();
+        //se detiene con un indexError, se devuelve a la matriz anterior
+        for(int f =0; f<m.length; ++f){
+            for(int c=0; c<m.length; ++c){
+                if(m[f][c]!=-1){
+                    if(zoom[f][c]==-1){
+                       espacioBlanco=true;
+                       zoom[f-1][c-1]=m[f][c];
+                       zoom[f-1][c]=m[f][c];
+                       zoom[f][c]=m[f][c];
+                       zoom[f][c-1]=m[f][c];
+                    }
+                    else{
+                        if(espacioBlanco==false){
+                            while(espacioBlanco==false){
+                                for(int i =0; espacioBlanco=true; ++i){
+                                    for(int j=0; espacioBlanco=true; ++j){
+                                        if(zoom[i][j]==-1){
+                                            if (zoom[i+1][j+1]==-1){
+                                                if(zoom[i+1][j]==-1){
+                                                    if(zoom[i][j+1]==-1){
+                                                        espacioBlanco=true;
+                                                        zoom[i][j]=m[f][c];
+                                                        zoom[i+1][j+1]=m[f][c];
+                                                        zoom[i+1][j]=m[f][c];
+                                                        zoom[i][j+1]=m[f][c];
+                                                   }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        contadorDeZoom+=2;
+                    }
+                }
+            }
+        }
+    }
     public void procesarImagen(){
         int colorBorde;
         int colorRelleno;
@@ -131,6 +175,8 @@ public class ProcesadorDeImagenes {
             }
         }
     }
+}
+    
     
     /* MANERA ALTERNATIVA DE SACAR LA FIGURA (Mas comprensible, menos eficiente)
     public void sacarFigura(int fila, int columna){
@@ -172,5 +218,5 @@ public class ProcesadorDeImagenes {
         System.out.println("Figura registrada.");
     }
     */
-}
+
 
