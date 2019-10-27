@@ -19,39 +19,32 @@ public class ProcesadorDeImagenes {
         matrizNueva = new int[m.length][m[0].length];
         colorFondo = m[0][0];
     }
-    public void agrandarImagen(int fila, int columna, int colorBorde, int colorRelleno){
-        boolean espacioBlanco =false;
+    public void agrandarImagen(int ima[][],int fila, int columna){
+        boolean cuadradoBlanco =false;
         int contadorDeZoom=0;
         int zoom[][] = new int[fila][columna];
         //centrarFigura();
         //se detiene con un indexError, se devuelve a la matriz anterior
-        for(int f =0; f<m.length; ++f){
-            for(int c=0; c<m.length; ++c){
-                if(m[f][c]!=-1){
-                    if(zoom[f][c]==-1){
-                       espacioBlanco=true;
-                       zoom[f-1][c-1]=m[f][c];
-                       zoom[f-1][c]=m[f][c];
-                       zoom[f][c]=m[f][c];
-                       zoom[f][c-1]=m[f][c];
+        for(int f =0; f<ima.length; ++f){
+            for(int c=0; c<ima.length; ++c){
+                if(ima[f][c]!=-1){
+                    if(zoom[f][c]==-1&& zoom[f-1][c]==-1&& zoom[f][c]==-1&& zoom[f][c-1]==-1){
+                       zoom[f-1][c-1]=ima[f][c];
+                       zoom[f-1][c]=ima[f][c];
+                       zoom[f][c]=ima[f][c];
+                       zoom[f][c-1]=ima[f][c];
                     }
                     else{
-                        if(espacioBlanco==false){
-                            while(espacioBlanco==false){
-                                for(int i =0; espacioBlanco=true; ++i){
-                                    for(int j=0; espacioBlanco=true; ++j){
-                                        if(zoom[i][j]==-1){
-                                            if (zoom[i+1][j+1]==-1){
-                                                if(zoom[i+1][j]==-1){
-                                                    if(zoom[i][j+1]==-1){
-                                                        espacioBlanco=true;
-                                                        zoom[i][j]=m[f][c];
-                                                        zoom[i+1][j+1]=m[f][c];
-                                                        zoom[i+1][j]=m[f][c];
-                                                        zoom[i][j+1]=m[f][c];
-                                                   }
-                                                }
-                                            }
+                        if(cuadradoBlanco==false){
+                            while(cuadradoBlanco==false){
+                                for(int i =0; cuadradoBlanco=true; ++i){
+                                    for(int j=0; cuadradoBlanco=true; ++j){
+                                        if(zoom[i][j]==-1 && zoom[i+1][j+1]==-1 && zoom[i+1][j]==-1 && zoom[i][j+1]==-1){
+                                           cuadradoBlanco=true;
+                                           zoom[i][j]=ima[f][c];
+                                           zoom[i+1][j+1]=ima[f][c];
+                                           zoom[i+1][j]=ima[f][c];
+                                           zoom[i][j+1]=ima[f][c];
                                         }
                                     }
                                 }
@@ -61,6 +54,7 @@ public class ProcesadorDeImagenes {
                     }
                 }
             }
+            //Copiar todos los elementos en la matriz que entra por parametro y volver zoom -1 para no tener que crear otro
         }
     }
     public void procesarImagen(){
