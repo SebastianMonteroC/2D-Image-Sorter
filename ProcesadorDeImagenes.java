@@ -1,24 +1,64 @@
 import javax.swing.*;
+
+
 public class ProcesadorDeImagenes {
-    String entrada;
-    Imagen i;
-    int ancho;
-    int largo;
-    int m[][];
-    int matrizNueva[][];
-    int colorFondo;
-    int limite[] = new int[4];// Limites que permiten conocer las medidas de la figura. La matriz guarda los 4 limites en orden
-    // limite[0] = limiteArriba / limite[1] = limiteAbajo / limite[2] = limiteIzquierdo / limite[3] = limiteDerecho
-    
+    private Catalogo catalogo;
+    private String entrada;
+    private Imagen i;
+    private int m[][];
+    private int matrizNueva[][];
+    private int colorFondo;
+    private int limite[] = new int[4];// Limites que permiten conocer las medidas de la figura. La matriz guarda los 4 limites en orden
+    int cantidadFiguras;              // limite[0] = limiteArriba / limite[1] = limiteAbajo / limite[2] = limiteIzquierdo / limite[3] = limiteDerecho
     int cantidadDePixeles;
+    int largoMayor = 0;
+    int anchoMayor = 0;
+    int recursiones = 0;
+    
     
     public ProcesadorDeImagenes(String entrada) {
-        this.entrada = entrada;
         i = new Imagen(entrada);
         m = i.getMatriz();
         matrizNueva = new int[m.length][m[0].length];
         colorFondo = m[0][0];
+        cantidadFiguras = 0;
     }
+    
+    public void procesarImagen(){
+        int colorBorde;
+        int colorRelleno;
+        Figura figura[] = new Figura[100];
+        
+        for(int fila = 0; fila < m.length; fila++){
+            for(int columna = 0; columna < m[fila].length; columna++){
+                if(m[fila][columna] != colorFondo){
+                    matrizLimpia(matrizNueva.length,matrizNueva[0].length);
+                    colorBorde = m[fila][columna];
+                    setLimitesIniciales(fila,columna);
+                    
+                    sacarFigura(fila,columna);
+                    colorRelleno = -1;//sacarColorRelleno(limite[0],limite[2],colorBorde);//ARREGLAR CON FONDO BLANCO
+                    
+                    figura[cantidadFiguras] = new Figura(colorFondo, colorBorde, colorRelleno, matrizNueva,limite,cantidadDePixeles);
+                    i = new Imagen(figura[cantidadFiguras].getMatriz());
+                    figura[cantidadFiguras].mostrarFigura();
+                    
+                    cantidadFiguras++;
+                    cantidadDePixeles = 0;
+                }
+            }
+        }
+        catalogo = new Catalogo(figura,cantidadFiguras);
+        
+        figuraMasGrande();
+    }
+    
+    public void resizeFiguras(){
+        //for(int i = 0; i < cantidadFiguras; i++){
+            catalogo.getFiguraEspecifica(0).resize(matrizNueva);
+        //}
+    }
+    
     public void agrandarImagen(int ima[][],int fila, int columna){
         boolean cuadradoBlanco =false;
         int contadorDeZoom=0;
@@ -57,58 +97,30 @@ public class ProcesadorDeImagenes {
             //Copiar todos los elementos en la matriz que entra por parametro y volver zoom -1 para no tener que crear otro
         }
     }
-    public void procesarImagen(){
-        int colorBorde;
-        int colorRelleno;
-        Figura figura[] = new Figura[10];
-        int cantidadFiguras = 0;
-        for(int fila = 0; fila < m.length; fila++){
-            for(int columna = 0; columna < m[fila].length; columna++){
-                if(m[fila][columna] != colorFondo){
-                    matrizLimpia(); 
-                    colorBorde = m[fila][columna];
-                    colorRelleno = sacarColorRelleno(fila,columna,colorBorde);
-                    setLimitesIniciales(fila,columna);
-                    sacarFigura(fila,columna);
-                    figura[cantidadFiguras] = new Figura(colorFondo, colorBorde, colorRelleno, matrizNueva,limite,cantidadDePixeles);
-                    figura[cantidadFiguras].mostrarFigura();
-                    cantidadFiguras++;
-                    cantidadDePixeles = 0;
-                }
+    
+    public void figuraMasGrande(){
+        int matriz[][];
+        int figuraActualLargo;
+        int figuraActualAncho;
+        for(int i = 0; i < cantidadFiguras; i++){
+            figuraActualLargo = (catalogo.getFiguraEspecifica(i)).getLargo();
+            figuraActualAncho = (catalogo.getFiguraEspecifica(i)).getAncho();
+            if(figuraActualLargo > largoMayor){
+                largoMayor = figuraActualLargo;
+            }
+            if(figuraActualAncho > anchoMayor){
+                anchoMayor = figuraActualAncho;
             }
         }
+        matrizLimpia(largoMayor+2,anchoMayor+2);
+        Imagen imagen1 = new Imagen(matrizNueva);
+        imagen1.dibujar();
     }
     
-    public int sacarColorRelleno(int fila, int columna,int colorBorde){
-        boolean colorEncontrado = false;
+    public int sacarColorRelleno(int fila, int columna, int colorBorde){
         int colorRelleno = 0;
-        int contador = 0;
-        int variableColumna = -1;
-        int variableFila = -1;
-        int filaSiguiente = fila;
-        int columnaSiguiente = columna;
-       
-        while(contador < 8){ //While que analiza los 9 pixeles alrededor de un pixel en especifico.
-            if(m[fila+variableFila][columna+variableColumna] != colorBorde && m[fila+variableFila][columna+variableColumna] != colorFondo){
-                colorRelleno = m[fila+variableFila][columna+variableColumna];
-                colorEncontrado = true;
-            }
-            filaSiguiente = fila+variableFila;
-            columnaSiguiente = columna+variableColumna;
-            contador++;
-            variableColumna++;
-            if(variableFila == 0 && variableColumna == 0){
-                variableColumna++;
-            }
-            if(contador == 3 || contador == 5){
-                variableColumna = -1;
-                variableFila++;
-            }
-        }
-        if(colorEncontrado == false){
-            colorRelleno = sacarColorRelleno(filaSiguiente,columnaSiguiente,colorBorde);
-        }
-        System.out.println(colorRelleno);
+        
+        
         return colorRelleno;
     }
     
@@ -146,7 +158,7 @@ public class ProcesadorDeImagenes {
         m[fila][columna] = colorFondo;
         cantidadDePixeles++;
         
-        while(contador < 9){ //While que analiza los 9 pixeles alrededor de un pixel en especifico.
+        while(contador < 8){ //While que analiza los 9 pixeles alrededor de un pixel en especifico.
             if(m[fila+variableFila][columna+variableColumna] != colorFondo){
                 sacarFigura(fila+variableFila,columna+variableColumna);
             }
@@ -162,15 +174,14 @@ public class ProcesadorDeImagenes {
         }
     }
     
-    public void matrizLimpia(){
-        for(int j = 0; j < matrizNueva.length; j++){
-            for(int k = 0; k < matrizNueva[j].length; k++){
+    public void matrizLimpia(int largo, int ancho){
+        matrizNueva = new int[largo][ancho];
+        for(int j = 0; j < largo; j++){
+            for(int k = 0; k < ancho; k++){
                 matrizNueva[j][k] = colorFondo;
             }
         }
     }
-}
-    
     
     /* MANERA ALTERNATIVA DE SACAR LA FIGURA (Mas comprensible, menos eficiente)
     public void sacarFigura(int fila, int columna){
@@ -212,5 +223,38 @@ public class ProcesadorDeImagenes {
         System.out.println("Figura registrada.");
     }
     */
-
+   /*public int sacarColorRelleno(int fila, int columna,int colorBorde){
+        boolean colorEncontrado = false;
+        int colorRelleno = 0;
+        int contador = 0;
+        int variableColumna = -1;
+        int variableFila = -1;
+        int filaSiguiente = fila;
+        int columnaSiguiente = columna;
+       
+        while(contador < 8){ //While que analiza los 9 pixeles alrededor de un pixel en especifico.
+            
+            if(m[fila+variableFila][columna+variableColumna] != colorBorde && m[fila+variableFila][columna+variableColumna] != colorFondo){
+                colorRelleno = m[fila+variableFila][columna+variableColumna];
+                colorEncontrado = true;
+            }
+            filaSiguiente = fila+variableFila;
+            columnaSiguiente = columna+variableColumna;
+            contador++;
+            variableColumna++;
+            if(variableFila == 0 && variableColumna == 0){
+                variableColumna++;
+            }
+            if(contador == 3 || contador == 5){
+                variableColumna = -1;
+                variableFila++;
+            }
+        }
+        if(colorEncontrado == false){
+            colorRelleno = sacarColorRelleno(filaSiguiente,columnaSiguiente,colorBorde);
+        }
+        System.out.println(colorRelleno);
+        return colorRelleno;
+    }*/
+}
 
