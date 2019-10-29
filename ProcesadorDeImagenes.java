@@ -1,6 +1,4 @@
 import javax.swing.*;
-
-
 public class ProcesadorDeImagenes {
     private Catalogo catalogo;
     private String entrada;
@@ -14,8 +12,6 @@ public class ProcesadorDeImagenes {
     int largoMayor = 0;
     int anchoMayor = 0;
     int recursiones = 0;
-    
-    
     public ProcesadorDeImagenes(String entrada) {
         i = new Imagen(entrada);
         m = i.getMatriz();
@@ -28,7 +24,6 @@ public class ProcesadorDeImagenes {
         int colorBorde;
         int colorRelleno;
         Figura figura[] = new Figura[100];
-        
         for(int fila = 0; fila < m.length; fila++){
             for(int columna = 0; columna < m[fila].length; columna++){
                 if(m[fila][columna] != colorFondo){
@@ -59,32 +54,38 @@ public class ProcesadorDeImagenes {
         //}
     }
     
-    public void agrandarImagen(int ima[][],int fila, int columna){
+    public void agrandarImagen(/*int ima[][],int fila, int columna*/){
         boolean cuadradoBlanco =false;
         int contadorDeZoom=0;
-        int zoom[][] = new int[fila][columna];
+        
+        int zoom[][] = new int[300][300];
+        for(int f =0; f<m.length; ++f){
+            for(int c=0; c<m[f].length; ++c){
+                zoom[f][c]=-1;
+            }
+        }
         //centrarFigura();
         //se detiene con un indexError, se devuelve a la matriz anterior
-        for(int f =0; f<ima.length; ++f){
-            for(int c=0; c<ima.length; ++c){
-                if(ima[f][c]!=-1){
-                    if(zoom[f][c]==-1&& zoom[f-1][c]==-1&& zoom[f][c]==-1&& zoom[f][c-1]==-1){
-                       zoom[f-1][c-1]=ima[f][c];
-                       zoom[f-1][c]=ima[f][c];
-                       zoom[f][c]=ima[f][c];
-                       zoom[f][c-1]=ima[f][c];
+        for(int f =1; f<m.length; ++f){
+            for(int c=1; c<m[f].length; ++c){
+                if(m[f][c]!=-1){
+                    if(zoom[f][c]==-1 && zoom[f-1][c]==-1 && zoom[f][c]==-1 && zoom[f][c-1]==-1){
+                       zoom[f-1][c-1]=m[f][c];
+                       zoom[f-1][c]=m[f][c];
+                       zoom[f][c]=m[f][c];
+                       zoom[f][c-1]=m[f][c];
                     }
                     else{
                         if(cuadradoBlanco==false){
                             while(cuadradoBlanco==false){
-                                for(int i =0; cuadradoBlanco=true; ++i){
-                                    for(int j=0; cuadradoBlanco=true; ++j){
-                                        if(zoom[i][j]==-1 && zoom[i+1][j+1]==-1 && zoom[i+1][j]==-1 && zoom[i][j+1]==-1){
+                                for(int i =1; i<zoom.length && cuadradoBlanco; ++i){
+                                    for(int j=1; j<zoom[i].length && cuadradoBlanco; ++j){
+                                        if(zoom[i][j]==-1 && zoom[i-11][j-1]==-1 && zoom[i-1][j]==-1 && zoom[i][j-1]==-1){
                                            cuadradoBlanco=true;
-                                           zoom[i][j]=ima[f][c];
-                                           zoom[i+1][j+1]=ima[f][c];
-                                           zoom[i+1][j]=ima[f][c];
-                                           zoom[i][j+1]=ima[f][c];
+                                           zoom[i][j]=m[f][c];
+                                           zoom[i-1][j-1]=m[f][c];
+                                           zoom[i-1][j]=m[f][c];
+                                           zoom[i][j-1]=m[f][c];
                                         }
                                     }
                                 }
@@ -119,8 +120,6 @@ public class ProcesadorDeImagenes {
     
     public int sacarColorRelleno(int fila, int columna, int colorBorde){
         int colorRelleno = 0;
-        
-        
         return colorRelleno;
     }
     
@@ -182,7 +181,13 @@ public class ProcesadorDeImagenes {
             }
         }
     }
-    
+    public void revisarColorIgualAFondo(int colorFondo){
+        boolean igualAFondo=false;
+        if(colorFondo==-1){
+            igualAFondo= true;
+            //figura.sacarManchas();
+        }
+    }
     /* MANERA ALTERNATIVA DE SACAR LA FIGURA (Mas comprensible, menos eficiente)
     public void sacarFigura(int fila, int columna){
         matrizNueva[fila][columna] = m[fila][columna];
