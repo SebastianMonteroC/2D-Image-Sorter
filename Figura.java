@@ -27,15 +27,15 @@ public class Figura {
     }
     
     public void calcularMedidas(){
-        largo = ((limite[1]+1) - (limite[0]-1))+1;
-        ancho = ((limite[3]+1) - (limite[2]-1))+1;
+        largo = ((limite[1]+1) - (limite[0]-1));
+        ancho = ((limite[3]+1) - (limite[2]-1));
         area = largo * ancho;
     }
     
     public void mostrarFigura(){
        // System.out.println("Largo: " + largo + "\nAncho: "+ ancho + "Area: " + area);
         //System.out.println(limite[0] + "\n" + limite[1] + "\n" + limite[2] + "\n" + limite[3]);
-        imagen.dibujar();
+       imagen.dibujar();
     }
     
     public void sacarManchas(){
@@ -43,7 +43,7 @@ public class Figura {
             for(int columna = limite[2]; columna < limite[3]; columna++){
                 if(matriz[fila][columna] != colorFondo && matriz[fila][columna] != colorBorde && matriz[fila][columna] != colorRelleno){
                     analizarPixeles(fila,columna);
-                    manchas++;
+                    
                 }
             }
         }
@@ -72,12 +72,22 @@ public class Figura {
             }
         }
     }
+
+    public void setImagen(){
+        this.imagen = new Imagen(matriz);
+    }
     
-    public void resize(int matrizNueva[][]){
-        
-        imagen = new Imagen(copiaMatriz);
-        imagen.dibujar();
-        
+    public void setMatriz(int[][] matriz){
+        this.matriz = matriz;
+        setImagen();
+    }
+    
+    public void setLimites(int[] limite){
+        this.limite = limite;
+    }
+    
+    public void setLimiteEspecifico(int indice, int limite){
+        this.limite[indice] = limite;
     }
     
     public int[][] getMatriz(){
@@ -94,6 +104,14 @@ public class Figura {
     
     public int getAncho(){
         return ancho;
+    }
+    
+    public int getLimite(int posicion){
+        return limite[posicion];
+    }
+    
+    public int getManchas(){
+        return manchas;
     }
 }
 
