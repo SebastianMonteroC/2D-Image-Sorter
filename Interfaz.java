@@ -44,60 +44,96 @@ public class Interfaz extends JFrame{
 
     }
     
+    /* @Funcion: hace la ventana visible
+     * @Param: -
+     * @Return: -
+     */
     public void mostrarVentana(){
         setVisible(true);
     }
     
+    /* @Funcion: muestra una ventana al usuario y le pide que ingrese el nombre del a imagen.gif
+    * @Param: -
+    * @Return: String nombre, variable que almacena el nombre de la imagen.gif
+    */
     public String pedirNombreImagen(){
         String nombre;
-        nombre = JOptionPane.showInputDialog(null,"Ingrese el nombre de la imagen (.gif) que desea utilizar.");
+        nombre = JOptionPane.showInputDialog(null,"Ingrese el nombre de la imagen (.gif) que desea utilizar:");
+        if(nombre == null){
+            System.exit(0);
+        }
         return nombre;
     }
     
+    /* @Funcion: elige mediante un switch el metodo a ejecutar.
+    * @Param: int instruccion, valor que se selecciona al presionar uno de los botones en pantalla.
+    * @Return: -
+    */
     public void seleccionarAccion(int instruccion){
         int max;
         int min;
         int numFigura;
         
-        try{
-            switch(instruccion){
-                case 1:
-                    catalogo.mostrarInventario();
-                break;
-                case 2:
-                    numFigura = Integer.parseInt(JOptionPane.showInputDialog(null,"Digite el numero de figura que desea ver."));
+        switch(instruccion){
+            case 1:
+                catalogo.mostrarInventario();
+            break;
+            case 2:
+                try{
+                    numFigura = Integer.parseInt(JOptionPane.showInputDialog(null,"Digite el numero de figura que desea ver:"));
                     catalogo.filtrarSegunNumFigura(numFigura);
+                }
+                catch(Exception inputInvalido){
+                    mensaje("Datos no ingresados");
+                }
                 break;
-                case 3:
-                    max = Integer.parseInt(JOptionPane.showInputDialog(null,"Digite el maximo de manchas que desea observar."));
-                    min = Integer.parseInt(JOptionPane.showInputDialog(null,"Digite el minimo de manchas que desea observar."));
+            case 3:
+                try{
+                    max = Integer.parseInt(JOptionPane.showInputDialog(null,"Maximo de manchas:"));
+                    min = Integer.parseInt(JOptionPane.showInputDialog(null,"Minimo de manchas:"));
                     catalogo.filtrarPorManchas(max,min);
-                break;
-                case 4:
-                    max = Integer.parseInt(JOptionPane.showInputDialog(null,"Digite el numero del maximo en escala que quiere ver."));
-                    min = Integer.parseInt(JOptionPane.showInputDialog(null,"Digite el nuamero del minimo en escala que quiere ver."));
+                }
+                catch(Exception inputInvalido){
+                    mensaje("Datos no ingresados");
+                }
+            break;
+            case 4:
+                try{
+                    max = Integer.parseInt(JOptionPane.showInputDialog(null,"Maximo en escala:"));
+                    min = Integer.parseInt(JOptionPane.showInputDialog(null,"Minimo en escala:"));
                     catalogo.filtrarSegunEscala(max, min);
-                break;
-                case 5:
-                    int maxAncho = Integer.parseInt(JOptionPane.showInputDialog(null,"Digite el numero del maximo en ancho que quiere ver."));
-                    int minAncho = Integer.parseInt(JOptionPane.showInputDialog(null,"Digite el numero del minimo en ancho que quiere ver."));
-                    int maxAltura = Integer.parseInt(JOptionPane.showInputDialog(null,"Digite el numero del maximo en altura que quiere ver."));
-                    int minAltura = Integer.parseInt(JOptionPane.showInputDialog(null,"Digite el numero del minimo en altura que quiere ver."));
+                }
+                catch(Exception inputInvalido){
+                    mensaje("Datos no ingresados");
+                }
+            break;
+            case 5:
+                try{
+                    int maxAncho = Integer.parseInt(JOptionPane.showInputDialog(null,"Ancho maximo:"));
+                    int minAncho = Integer.parseInt(JOptionPane.showInputDialog(null,"Ancho minimo:"));
+                    int maxAltura = Integer.parseInt(JOptionPane.showInputDialog(null,"Largo maximo:"));
+                    int minAltura = Integer.parseInt(JOptionPane.showInputDialog(null,"Largo minimo:"));
                     catalogo.filtrarSegunDimensiones(maxAncho, minAncho, maxAltura, minAltura);
-                break;
-                case 6:
-                    max = Integer.parseInt(JOptionPane.showInputDialog(null,"Digite el numero del maximo en area que quiere ver."));
-                    min = Integer.parseInt(JOptionPane.showInputDialog(null,"Digite el numero del minimo en area que quiere ver."));
+                }
+                catch(Exception inputInvalido){
+                    mensaje("Datos no ingresados");
+                }
+            break;
+            case 6:
+                try{
+                    max = Integer.parseInt(JOptionPane.showInputDialog(null,"Area maxima:"));
+                    min = Integer.parseInt(JOptionPane.showInputDialog(null,"Area minima:"));
                     catalogo.filtrarSegunArea(max, min);
-                break;
-                case 7:
-                    System.exit(0);
-                break;
-            }
+                }
+                catch(Exception inputInvalido){
+                    mensaje("Datos no ingresados");
+                }
+            break;
+            case 7:
+                System.exit(0);
+            break;
         }
-        catch(Exception e){
         
-        }
     }
  
    
@@ -113,7 +149,7 @@ public class Interfaz extends JFrame{
     
     /* METODOS QUE CREAN BOTONES */
 
-     /* @Funcion: Crea un boton para ver el puntaje mas alto guardado en la interfaz
+     /* @Funcion: Crea un boton para ver el inventario.
      * @Param: - 
      * @Return: -
      */
@@ -128,8 +164,12 @@ public class Interfaz extends JFrame{
         }); 
     }
     
+    /* Funcion: crea un boton para ejecutar el metodo filtrarPorNumero en Catalogo.
+    * Param: -
+    * Return: -
+    */
     public void crearBotonFiltrarPorNumero(){
-        filtrarPorNumero = new JButton("Filtrar Por Numero");
+        filtrarPorNumero = new JButton("Mostrar por numero");
         filtrarPorNumero.setBounds(150,100,200,40);
         this.add(filtrarPorNumero);
         filtrarPorNumero.addActionListener(new ActionListener(){
@@ -139,7 +179,7 @@ public class Interfaz extends JFrame{
         });
     }
     
-     /* @Funcion: Crea un boton para cambiar la cantidad de flechas que seran utilizadas por set en la partida
+     /* @Funcion: Crea un boton para ejecutar el metodo filtrarPorManchas en Catalogo. 
      * @Param: - 
      * @Return: -
      */
@@ -153,16 +193,8 @@ public class Interfaz extends JFrame{
             }
         });
     }
-    
-    
-    
-     /* @Funcion: Crea un boton para cambiar la cantidad de sets que se jugaran en la partida en la interfaz
-     * @Param: - 
-     * @Return: -
-     */
-    
-    
-     /* @Funcion: Crea un boton para empezar el juego en la interfaz
+
+     /* @Funcion: Crea un boton para filtrar las figuras que se mostraran segun escala. 
      * @Param: - 
      * @Return: -
      */
@@ -178,6 +210,10 @@ public class Interfaz extends JFrame{
         }); 
     }
     
+    /* @Funcion: Crea un boton para filtrar las figuras que se van a mostrar segÃºn dimensiones.
+    * @Param: - 
+    * @Return: -
+    */
     public void crearBotonFiltrarPorDimensiones(){
         filtrarPorDimensiones = new JButton("Filtrar Por Dimensiones");
         filtrarPorDimensiones.setBounds(150,250,200,40);
@@ -190,6 +226,10 @@ public class Interfaz extends JFrame{
         });
     }
     
+    /* @Funcion: Crea un boton para filtrar las figuras que se van a mostrar segun area.
+    * @Param: - 
+    * @Return: -
+    */
     public void crearBotonFiltrarPorArea(){
         filtrarPorArea = new JButton("Filtrar Por Area");
         filtrarPorArea.setBounds(150,300,200,40);
@@ -202,17 +242,26 @@ public class Interfaz extends JFrame{
         });
     }
      
+    /* @Funcion: Crea un boton para salir del programa.
+    * @Param: - 
+    * @Return: -
+    */ 
     public void crearBotonSalir(){
         salir = new JButton("Salir");
         salir.setBounds(150,350,200,50);
         this.add(salir);
         salir.addActionListener(new ActionListener(){
+           @Override
            public void actionPerformed(ActionEvent evt){
                seleccionarAccion(7);
             }
         });
     }
     
+    /* @Funcion: se asegura de que el valor ingresado por el usuario sea valido para usarlo en los metodos.
+    * @Param: String datoIngresado, valor que cambia dependiendo del metodo que se utilice.
+    * @Return: boolean esEntero, devuelve si el valor es valido o no.
+    */
     public boolean esEntero(String datoIngresado){
         int numeroPrueba = 0;
         boolean esEntero;
@@ -226,24 +275,6 @@ public class Interfaz extends JFrame{
         return esEntero;
     }
 
-     /* @Funcion: Carga una imagen en la ventana elegeida de la interfaz
-     * @Param: String path es la localizacion de la imagen
-     * sizeX es el tama�o X de la imagen
-     * sizeY es el tama�o Y de la imagen
-     * @Return: -
-     */
-    public void cargarImagen(String path, int sizeX, int sizeY){
-        Image img = Toolkit.getDefaultToolkit().getImage(path);
-        Image newImg = img.getScaledInstance(sizeX, sizeY, Image.SCALE_DEFAULT);
-        this.setContentPane(new JPanel() {
-            @Override
-            public void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                g.drawImage(newImg, 1, 1, null);
-            }
-        });
-        }
-    
     public void setProcesadorDeImagenes(ProcesadorDeImagenes procesadorDeImagenes){
         this.procesadorDeImagenes = procesadorDeImagenes;
         this.catalogo = procesadorDeImagenes.getCatalogo();
